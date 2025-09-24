@@ -6,7 +6,7 @@ export function toggleTheme(theme: Theme) {
 	return theme === "LIGHT" ? "DARK" : "LIGHT";
 }
 
-export const useTheme = create<ThemeState>()(
+export const useThemeStore = create<ThemeState>()(
 	persist(
 		(set) => ({
 			theme: "LIGHT",
