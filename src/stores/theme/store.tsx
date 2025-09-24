@@ -3,7 +3,9 @@ import { persist } from "zustand/middleware";
 import type { Theme, ThemeState } from "./types";
 
 export function toggleTheme(theme: Theme) {
-	return theme === "LIGHT" ? "DARK" : "LIGHT";
+	const newTheme = theme === "LIGHT" ? "DARK" : ("LIGHT" as Theme);
+
+	return { theme: newTheme };
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -11,9 +13,7 @@ export const useThemeStore = create<ThemeState>()(
 		(set) => ({
 			theme: "LIGHT",
 			toggleTheme() {
-				return set((state) => ({
-					theme: toggleTheme(state.theme),
-				}));
+				return set((state) => toggleTheme(state.theme));
 			},
 		}),
 		{
