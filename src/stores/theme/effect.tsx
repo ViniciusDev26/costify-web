@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useThemeStore } from "./store";
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeEffect() {
 	const theme = useThemeStore((s) => s.theme);
 
 	useEffect(() => {
@@ -11,5 +11,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 		root.classList.add(theme.toLocaleLowerCase());
 	}, [theme]);
 
-	return <>{children}</>;
+	return null;
 }

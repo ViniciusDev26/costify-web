@@ -3,14 +3,13 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import "./index.css";
 import App from "./App.tsx";
-import { ThemeProvider } from "./stores/theme/provider.tsx";
+import { ThemeEffect } from "./stores/theme/effect.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
+		<ThemeEffect />
 		<BrowserRouter>
-			<ThemeProvider>
-				<App />
-			</ThemeProvider>
+			<App />
 		</BrowserRouter>
 	</StrictMode>,
 );
