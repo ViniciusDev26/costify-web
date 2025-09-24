@@ -1,7 +1,7 @@
-import { Switch } from "./components/ui/switch";
-import { useThemeStore } from "./stores/theme/store";
+import { Switch } from "../../components/ui/switch";
+import { useThemeStore } from "../../stores/theme/store";
 
-function App() {
+export function Home() {
 	const { theme, toggleTheme } = useThemeStore();
 
 	return (
@@ -13,5 +13,3 @@ function App() {
 		</div>
 	);
 }
-
-export default App;
