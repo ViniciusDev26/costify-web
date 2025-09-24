@@ -7,8 +7,7 @@ export function ThemeEffect() {
 	useEffect(() => {
 		const root = window.document.documentElement;
 		root.classList.remove("light", "dark");
-
-		root.classList.add(theme.toLocaleLowerCase());
+		root.classList.add(theme.toLowerCase());
 	}, [theme]);
 
 	return null;
