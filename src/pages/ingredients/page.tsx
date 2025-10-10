@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { UnitArray } from "@/domain/unit";
+import { useUnitsQuery } from "@/hooks/use-units-query";
 import {
 	type CreateIngredientInput,
 	CreateIngredientSchema,
@@ -22,16 +23,19 @@ export function IngredientsPage() {
 		resolver: zodResolver(CreateIngredientSchema),
 	});
 
+	const { data } = useUnitsQuery().all();
+	const units = useMemo(() => {
+		const units = data?.map((unit) => unit.name);
+		return units ?? [];
+	}, [data]);
+
 	function onSubmit(data: CreateIngredientInput) {
 		console.log(data);
 	}
 
 	return (
 		<div className="w-full h-screen flex items-center justify-center gap-2">
-			<form
-				className="flex flex-col gap-2"
-				onSubmit={handleSubmit(onSubmit, onSubmit)}
-			>
+			<form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
 				<InputGroup>
 					<Label htmlFor="name">Nome do ingrediente</Label>
 					<Input id="name" {...register("name")} />
@@ -58,7 +62,7 @@ export function IngredientsPage() {
 									<SelectValue placeholder="Unidade" />
 								</SelectTrigger>
 								<SelectContent>
-									{UnitArray.map((un) => (
+									{units?.map((un) => (
 										<SelectItem key={un} value={un}>
 											{un}
 										</SelectItem>
