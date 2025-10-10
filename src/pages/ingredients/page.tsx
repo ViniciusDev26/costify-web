@@ -19,15 +19,16 @@ import {
 } from "./schemas/create-ingredient.schema";
 
 export function IngredientsPage() {
+	const { all } = useUnitsQuery();
+	const { data: unitsData } = all();
 	const { register, handleSubmit, control } = useForm({
 		resolver: zodResolver(CreateIngredientSchema),
 	});
 
-	const { data } = useUnitsQuery().all();
 	const units = useMemo(() => {
-		const units = data?.map((unit) => unit.name);
+		const units = unitsData?.map((unit) => unit.name);
 		return units ?? [];
-	}, [data]);
+	}, [unitsData]);
 
 	function onSubmit(data: CreateIngredientInput) {
 		console.log(data);
