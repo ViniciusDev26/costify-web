@@ -1,11 +1,12 @@
 import { client } from "../client";
-import type { CreateIngredientInput } from "./ingredients.types";
+import type { CreateIngredientInput, IngredientsListResponse } from "./ingredients.types";
 
-async function registerIngredient(input: CreateIngredientInput) {
-	const { data } = await client.post("/api/ingredients", input);
-	return data;
+export async function registerIngredient(input: CreateIngredientInput) {
+  const { data } = await client.post("/api/ingredients", input);
+  return data;
 }
 
-export const ingredientsQueries = {
-	registerIngredient,
-};
+export async function listIngredients() {
+  const { data } = await client.get<IngredientsListResponse>("/api/ingredients");
+  return data;
+}

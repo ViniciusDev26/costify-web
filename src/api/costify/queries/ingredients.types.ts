@@ -4,3 +4,15 @@ export type CreateIngredientInput = {
 	packageQuantity: number;
 	packageUnit: string;
 };
+
+// ===== Listagem =====
+export type Ingredient = {
+  id: string;
+  name: string;
+  packageQuantity: number;
+  packagePrice: number;
+  packageUnit: string;
+  unitCost?: number; // pode vir calculado pelo backend
+};
+
+export type IngredientsListResponse = Ingredient[];

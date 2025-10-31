@@ -1,17 +1,20 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ingredientsQueries } from "@/api/costify/queries/ingredients";
-
-export const INGREDIENTS_QUERY_KEYS = {
-	all: ["ingredients"] as const,
-};
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { registerIngredient, listIngredients } from "@/api/costify/queries/ingredients";
+import type { CreateIngredientInput } from "@/api/costify/queries/ingredients.types";
 
 export function useRegisterIngredient() {
-	const queryClient = useQueryClient();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreateIngredientInput) => registerIngredient(input),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["ingredients"] });
+    },
+  });
+}
 
-	return useMutation({
-		mutationFn: ingredientsQueries.registerIngredient,
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: INGREDIENTS_QUERY_KEYS.all });
-		},
-	});
+export function useIngredientsList() {
+  return useQuery({
+    queryKey: ["ingredients"],
+    queryFn: () => listIngredients(),
+  });
 }

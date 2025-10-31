@@ -12,15 +12,16 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useUnitsQuery } from "@/hooks/use-units-query";
+import { useUnits } from "@/hooks/use-units-query";
 import {
 	type CreateIngredientInput,
 	CreateIngredientSchema,
 } from "./schemas/create-ingredient.schema";
+import { useRegisterIngredient } from "@/hooks/use-ingredients-query";
 
 export function IngredientsPage() {
-	const { all } = useUnitsQuery();
-	const { data: unitsData } = all();
+	const { data: unitsData } = useUnits();
+	const { mutateAsync: registerIngredient, isPending, error } = useRegisterIngredient();
 	const { register, handleSubmit, control } = useForm({
 		resolver: zodResolver(CreateIngredientSchema),
 	});
@@ -30,9 +31,9 @@ export function IngredientsPage() {
 		return units ?? [];
 	}, [unitsData]);
 
-	function onSubmit(data: CreateIngredientInput) {
-		console.log(data);
-	}
+	async function onSubmit(data: CreateIngredientInput) {
+   		await registerIngredient(data);
+}
 
 	return (
 		<div className="w-full h-screen flex items-center justify-center gap-2">
@@ -44,7 +45,7 @@ export function IngredientsPage() {
 
 				<InputGroup>
 					<Label htmlFor="price">Preço do ingrediente</Label>
-					<Input id="price" type="number" {...register("price")} />
+					<Input id="price" type="number" {...register("packagePrice")} />
 				</InputGroup>
 
 				<InputGroup>
