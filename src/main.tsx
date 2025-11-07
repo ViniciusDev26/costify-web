@@ -6,6 +6,7 @@ import { RouterProvider } from "react-router-dom";
 import { queryClient } from "./api/query-client.ts";
 import { router } from "./routes/index.tsx";
 import { ThemeEffect } from "./stores/theme/effect.tsx";
+import { ThemeToggle } from "./components/theme-toggle.tsx";
 
 
 createRoot(document.getElementById("root")!).render(
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")!).render(
 		<ThemeEffect />
 		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router} />
+			<ThemeToggle />
 		</QueryClientProvider>
 	</StrictMode>,
 );

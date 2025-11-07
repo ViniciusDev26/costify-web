@@ -12,16 +12,16 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useRegisterIngredient } from "@/hooks/use-ingredients-query";
 import { useUnits } from "@/hooks/use-units-query";
 import {
 	type CreateIngredientInput,
 	CreateIngredientSchema,
 } from "./schemas/create-ingredient.schema";
-import { useRegisterIngredient } from "@/hooks/use-ingredients-query";
 
 export function IngredientsPage() {
 	const { data: unitsData } = useUnits();
-	const { mutateAsync: registerIngredient, isPending, error } = useRegisterIngredient();
+	const { mutateAsync: registerIngredient } = useRegisterIngredient();
 	const { register, handleSubmit, control } = useForm({
 		resolver: zodResolver(CreateIngredientSchema),
 	});
@@ -32,8 +32,8 @@ export function IngredientsPage() {
 	}, [unitsData]);
 
 	async function onSubmit(data: CreateIngredientInput) {
-   		await registerIngredient(data);
-}
+		await registerIngredient(data);
+	}
 
 	return (
 		<div className="w-full h-screen flex items-center justify-center gap-2">
