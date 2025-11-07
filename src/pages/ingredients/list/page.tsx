@@ -10,6 +10,14 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { useIngredientsList } from "@/hooks/use-ingredients-query";
 import { IngredientForm } from "../components/ingredient-form";
 
@@ -81,35 +89,35 @@ export default function IngredientsListPage() {
 					</AlertDescription>
 				</Alert>
 			) : (
-				<div className="overflow-x-auto rounded border">
-					<table className="min-w-full text-left text-sm">
-						<thead className="border-b bg-gray-50 text-gray-700">
-							<tr>
-								<th className="px-4 py-2">Nome</th>
-								<th className="px-4 py-2">Pacote</th>
-								<th className="px-4 py-2">Preço do pacote</th>
-								<th className="px-4 py-2">Custo unitário</th>
-							</tr>
-						</thead>
-						<tbody>
+				<div className="rounded-md border">
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Nome</TableHead>
+								<TableHead>Pacote</TableHead>
+								<TableHead>Preço do pacote</TableHead>
+								<TableHead>Custo unitário</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
 							{data.map((ing) => (
-								<tr key={ing.id} className="border-b last:border-0">
-									<td className="px-4 py-2">{ing.name}</td>
-									<td className="px-4 py-2">
+								<TableRow key={ing.id}>
+									<TableCell className="font-medium">{ing.name}</TableCell>
+									<TableCell>
 										{ing.packageQuantity} {ing.packageUnit}
-									</td>
-									<td className="px-4 py-2">
+									</TableCell>
+									<TableCell>
 										{currency.format(ing.packagePrice)}
-									</td>
-									<td className="px-4 py-2">
+									</TableCell>
+									<TableCell>
 										{typeof ing.unitCost === "number"
 											? currency.format(ing.unitCost)
 											: "—"}
-									</td>
-								</tr>
+									</TableCell>
+								</TableRow>
 							))}
-						</tbody>
-					</table>
+						</TableBody>
+					</Table>
 				</div>
 			)}
 		</div>

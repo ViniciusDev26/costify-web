@@ -10,6 +10,14 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { RefreshCw, Plus, ArrowLeft } from "lucide-react";
 import { RecipeForm } from "./components/recipe-form";
 
@@ -81,27 +89,27 @@ export default function RecipesListPage() {
 					</AlertDescription>
 				</Alert>
 			) : (
-				<div className="overflow-x-auto rounded border">
-					<table className="min-w-full text-left text-sm">
-						<thead className="border-b bg-gray-50 text-gray-700">
-							<tr>
-								<th className="px-4 py-2">Nome</th>
-								<th className="px-4 py-2">Custo total</th>
-							</tr>
-						</thead>
-						<tbody>
+				<div className="rounded-md border">
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Nome</TableHead>
+								<TableHead>Custo total</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
 							{data.map((recipe) => (
-								<tr key={recipe.id} className="border-b last:border-0">
-									<td className="px-4 py-2">{recipe.name}</td>
-									<td className="px-4 py-2">
+								<TableRow key={recipe.id}>
+									<TableCell className="font-medium">{recipe.name}</TableCell>
+									<TableCell>
 										{typeof recipe.totalCost === "number"
 											? currency.format(recipe.totalCost)
 											: "—"}
-									</td>
-								</tr>
+									</TableCell>
+								</TableRow>
 							))}
-						</tbody>
-					</table>
+						</TableBody>
+					</Table>
 				</div>
 			)}
 		</div>
