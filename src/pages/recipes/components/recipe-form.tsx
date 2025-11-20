@@ -156,6 +156,7 @@ export function RecipeForm({
 											<Select
 												onValueChange={field.onChange}
 												value={field.value}
+												defaultValue={field.value}
 											>
 												<SelectTrigger>
 													<SelectValue placeholder="Selecione o ingrediente" />
@@ -203,6 +204,7 @@ export function RecipeForm({
 												<Select
 													onValueChange={field.onChange}
 													value={field.value}
+													defaultValue={field.value}
 												>
 													<SelectTrigger>
 														<SelectValue placeholder="Unidade" />
