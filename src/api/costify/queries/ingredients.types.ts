@@ -5,6 +5,13 @@ export type CreateIngredientInput = {
 	packageUnit: string;
 };
 
+export type UpdateIngredientInput = {
+	name: string;
+	packagePrice: number;
+	packageQuantity: number;
+	packageUnit: string;
+};
+
 // ===== Listagem =====
 export type Ingredient = {
   id: string;

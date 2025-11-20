@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, RefreshCw } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -97,6 +97,7 @@ export default function IngredientsListPage() {
 								<TableHead>Pacote</TableHead>
 								<TableHead>Preço do pacote</TableHead>
 								<TableHead>Custo unitário</TableHead>
+								<TableHead className="w-[100px]">Ações</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -113,6 +114,18 @@ export default function IngredientsListPage() {
 										{typeof ing.unitCost === "number"
 											? currency.format(ing.unitCost)
 											: "—"}
+									</TableCell>
+									<TableCell>
+										<Button
+											variant="ghost"
+											size="icon"
+											asChild
+											title="Editar ingrediente"
+										>
+											<Link to={`/ingredients/${ing.id}/edit`}>
+												<Pencil className="h-4 w-4" />
+											</Link>
+										</Button>
 									</TableCell>
 								</TableRow>
 							))}

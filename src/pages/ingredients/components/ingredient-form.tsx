@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,38 +13,76 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useRegisterIngredient } from "@/hooks/use-ingredients-query";
+import { useRegisterIngredient, useUpdateIngredient } from "@/hooks/use-ingredients-query";
 import { useUnits } from "@/hooks/use-units-query";
 import {
 	type CreateIngredientInput,
 	CreateIngredientSchema,
 } from "../schemas/create-ingredient.schema";
+import {
+	type UpdateIngredientInput,
+	UpdateIngredientSchema,
+} from "../schemas/update-ingredient.schema";
+import type { Ingredient } from "@/api/costify/queries/ingredients.types";
 
 interface IngredientFormProps {
 	onSuccess?: () => void;
+	mode?: "create" | "edit";
+	ingredientId?: string;
+	initialData?: Ingredient;
 }
 
-export function IngredientForm({ onSuccess }: IngredientFormProps) {
+export function IngredientForm({ onSuccess, mode = "create", ingredientId, initialData }: IngredientFormProps) {
 	const { data: unitsData } = useUnits();
 	const {
 		mutateAsync: registerIngredient,
-		isPending,
-		error,
+		isPending: isCreating,
+		error: createError,
 	} = useRegisterIngredient();
+	const {
+		mutateAsync: updateIngredient,
+		isPending: isUpdating,
+		error: updateError,
+	} = useUpdateIngredient(ingredientId || "");
+
 	const { register, handleSubmit, control, reset } = useForm({
-		resolver: zodResolver(CreateIngredientSchema),
+		resolver: zodResolver(mode === "create" ? CreateIngredientSchema : UpdateIngredientSchema),
+		defaultValues: initialData ? {
+			name: initialData.name,
+			packagePrice: initialData.packagePrice,
+			packageQuantity: initialData.packageQuantity,
+			packageUnit: initialData.packageUnit,
+		} : undefined,
 	});
+
+	useEffect(() => {
+		if (initialData) {
+			reset({
+				name: initialData.name,
+				packagePrice: initialData.packagePrice,
+				packageQuantity: initialData.packageQuantity,
+				packageUnit: initialData.packageUnit,
+			});
+		}
+	}, [initialData, reset]);
 
 	const units = useMemo(() => {
 		const units = unitsData?.map((unit) => unit.name);
 		return units ?? [];
 	}, [unitsData]);
 
-	async function onSubmit(data: CreateIngredientInput) {
-		await registerIngredient(data);
-		reset();
+	async function onSubmit(data: CreateIngredientInput | UpdateIngredientInput) {
+		if (mode === "edit") {
+			await updateIngredient(data);
+		} else {
+			await registerIngredient(data);
+			reset();
+		}
 		onSuccess?.();
 	}
+
+	const isPending = isCreating || isUpdating;
+	const error = createError || updateError;
 
 	return (
 		<form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -102,7 +140,10 @@ export function IngredientForm({ onSuccess }: IngredientFormProps) {
 			)}
 
 			<Button type="submit" disabled={isPending}>
-				{isPending ? "Cadastrando..." : "Cadastrar ingrediente"}
+				{isPending
+					? (mode === "edit" ? "Atualizando..." : "Cadastrando...")
+					: (mode === "edit" ? "Atualizar ingrediente" : "Cadastrar ingrediente")
+				}
 			</Button>
 		</form>
 	);
