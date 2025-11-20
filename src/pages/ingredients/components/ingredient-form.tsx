@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
+import type { Ingredient } from "@/api/costify/queries/ingredients.types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { CurrencyInput } from "@/components/ui/currency-input";
+import { Input } from "@/components/ui/input";
 import { InputGroup } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import {
@@ -13,7 +14,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useRegisterIngredient, useUpdateIngredient } from "@/hooks/use-ingredients-query";
+import {
+	useRegisterIngredient,
+	useUpdateIngredient,
+} from "@/hooks/use-ingredients-query";
 import { useUnits } from "@/hooks/use-units-query";
 import {
 	type CreateIngredientInput,
@@ -23,7 +27,6 @@ import {
 	type UpdateIngredientInput,
 	UpdateIngredientSchema,
 } from "../schemas/update-ingredient.schema";
-import type { Ingredient } from "@/api/costify/queries/ingredients.types";
 
 interface IngredientFormProps {
 	onSuccess?: () => void;
@@ -32,7 +35,12 @@ interface IngredientFormProps {
 	initialData?: Ingredient;
 }
 
-export function IngredientForm({ onSuccess, mode = "create", ingredientId, initialData }: IngredientFormProps) {
+export function IngredientForm({
+	onSuccess,
+	mode = "create",
+	ingredientId,
+	initialData,
+}: IngredientFormProps) {
 	const { data: unitsData } = useUnits();
 	const {
 		mutateAsync: registerIngredient,
@@ -46,13 +54,17 @@ export function IngredientForm({ onSuccess, mode = "create", ingredientId, initi
 	} = useUpdateIngredient(ingredientId || "");
 
 	const { register, handleSubmit, control, reset } = useForm({
-		resolver: zodResolver(mode === "create" ? CreateIngredientSchema : UpdateIngredientSchema),
-		defaultValues: initialData ? {
-			name: initialData.name,
-			packagePrice: initialData.packagePrice,
-			packageQuantity: initialData.packageQuantity,
-			packageUnit: initialData.packageUnit,
-		} : undefined,
+		resolver: zodResolver(
+			mode === "create" ? CreateIngredientSchema : UpdateIngredientSchema,
+		),
+		defaultValues: initialData
+			? {
+					name: initialData.name,
+					packagePrice: initialData.packagePrice,
+					packageQuantity: initialData.packageQuantity,
+					packageUnit: initialData.packageUnit,
+				}
+			: undefined,
 	});
 
 	useEffect(() => {
@@ -135,15 +147,18 @@ export function IngredientForm({ onSuccess, mode = "create", ingredientId, initi
 
 			{error && (
 				<p className="text-sm text-destructive">
-					Erro ao cadastrar ingrediente: {(error as any)?.message ?? "erro desconhecido"}
+					Erro ao cadastrar ingrediente: {error?.message ?? "erro desconhecido"}
 				</p>
 			)}
 
 			<Button type="submit" disabled={isPending}>
 				{isPending
-					? (mode === "edit" ? "Atualizando..." : "Cadastrando...")
-					: (mode === "edit" ? "Atualizar ingrediente" : "Cadastrar ingrediente")
-				}
+					? mode === "edit"
+						? "Atualizando..."
+						: "Cadastrando..."
+					: mode === "edit"
+						? "Atualizar ingrediente"
+						: "Cadastrar ingrediente"}
 			</Button>
 		</form>
 	);

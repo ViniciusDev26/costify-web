@@ -1,8 +1,8 @@
+import { ArrowLeft, Pencil, Plus, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useRecipesList } from "@/hooks/use-recipes-query";
-import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -18,7 +18,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { RefreshCw, Plus, ArrowLeft } from "lucide-react";
+import { useRecipesList } from "@/hooks/use-recipes-query";
 import { RecipeForm } from "./components/recipe-form";
 
 const currency = new Intl.NumberFormat("pt-BR", {
@@ -95,6 +95,7 @@ export default function RecipesListPage() {
 							<TableRow>
 								<TableHead>Nome</TableHead>
 								<TableHead>Custo total</TableHead>
+								<TableHead className="w-[100px]">Ações</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -105,6 +106,18 @@ export default function RecipesListPage() {
 										{typeof recipe.totalCost === "number"
 											? currency.format(recipe.totalCost)
 											: "—"}
+									</TableCell>
+									<TableCell>
+										<Button
+											variant="ghost"
+											size="icon"
+											asChild
+											title="Editar receita"
+										>
+											<Link to={`/recipes/${recipe.id}/edit`}>
+												<Pencil className="h-4 w-4" />
+											</Link>
+										</Button>
 									</TableCell>
 								</TableRow>
 							))}

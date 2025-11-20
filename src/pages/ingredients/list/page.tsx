@@ -107,9 +107,7 @@ export default function IngredientsListPage() {
 									<TableCell>
 										{ing.packageQuantity} {ing.packageUnit}
 									</TableCell>
-									<TableCell>
-										{currency.format(ing.packagePrice)}
-									</TableCell>
+									<TableCell>{currency.format(ing.packagePrice)}</TableCell>
 									<TableCell>
 										{typeof ing.unitCost === "number"
 											? currency.format(ing.unitCost)

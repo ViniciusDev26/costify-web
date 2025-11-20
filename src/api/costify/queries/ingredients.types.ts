@@ -14,12 +14,12 @@ export type UpdateIngredientInput = {
 
 // ===== Listagem =====
 export type Ingredient = {
-  id: string;
-  name: string;
-  packageQuantity: number;
-  packagePrice: number;
-  packageUnit: string;
-  unitCost?: number; // pode vir calculado pelo backend
+	id: string;
+	name: string;
+	packageQuantity: number;
+	packagePrice: number;
+	packageUnit: string;
+	unitCost?: number; // pode vir calculado pelo backend
 };
 
 export type IngredientsListResponse = Ingredient[];

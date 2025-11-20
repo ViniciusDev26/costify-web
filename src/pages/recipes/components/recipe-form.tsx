@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import type { Recipe } from "@/api/costify/queries/recipes.types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,21 +16,42 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useIngredientsList } from "@/hooks/use-ingredients-query";
-import { useRegisterRecipe } from "@/hooks/use-recipes-query";
+import { useRegisterRecipe, useUpdateRecipe } from "@/hooks/use-recipes-query";
 import { useUnits } from "@/hooks/use-units-query";
 import {
-	CreateRecipeSchema,
 	type CreateRecipeInput,
+	CreateRecipeSchema,
 } from "../schemas/create-recipe.schema";
+import {
+	type UpdateRecipeInput,
+	UpdateRecipeSchema,
+} from "../schemas/update-recipe.schema";
 
 interface RecipeFormProps {
 	onSuccess?: () => void;
+	mode?: "create" | "edit";
+	recipeId?: string;
+	initialData?: Recipe;
 }
 
-export function RecipeForm({ onSuccess }: RecipeFormProps) {
+export function RecipeForm({
+	onSuccess,
+	mode = "create",
+	recipeId,
+	initialData,
+}: RecipeFormProps) {
 	const { data: ingredients } = useIngredientsList();
 	const { data: units } = useUnits();
-	const { mutateAsync: registerRecipe, isPending, error } = useRegisterRecipe();
+	const {
+		mutateAsync: registerRecipe,
+		isPending: isCreating,
+		error: createError,
+	} = useRegisterRecipe();
+	const {
+		mutateAsync: updateRecipe,
+		isPending: isUpdating,
+		error: updateError,
+	} = useUpdateRecipe(recipeId || "");
 
 	const {
 		register,
@@ -36,24 +59,55 @@ export function RecipeForm({ onSuccess }: RecipeFormProps) {
 		control,
 		reset,
 		formState: { errors },
-	} = useForm<CreateRecipeInput>({
-		resolver: zodResolver(CreateRecipeSchema),
-		defaultValues: {
-			name: "",
-			ingredients: [{ ingredientId: "", quantity: 0, unit: "" }],
-		},
+	} = useForm<CreateRecipeInput | UpdateRecipeInput>({
+		resolver: zodResolver(
+			mode === "create" ? CreateRecipeSchema : UpdateRecipeSchema,
+		),
+		defaultValues: initialData
+			? {
+					name: initialData.name,
+					ingredients: initialData.ingredients.map((ing) => ({
+						ingredientId: ing.ingredientId,
+						quantity: ing.quantity,
+						unit: ing.unit,
+					})),
+				}
+			: {
+					name: "",
+					ingredients: [{ ingredientId: "", quantity: 0, unit: "" }],
+				},
 	});
+
+	useEffect(() => {
+		if (initialData) {
+			reset({
+				name: initialData.name,
+				ingredients: initialData.ingredients.map((ing) => ({
+					ingredientId: ing.ingredientId,
+					quantity: ing.quantity,
+					unit: ing.unit,
+				})),
+			});
+		}
+	}, [initialData, reset]);
 
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "ingredients",
 	});
 
-	async function onSubmit(data: CreateRecipeInput) {
-		await registerRecipe(data);
-		reset();
+	async function onSubmit(data: CreateRecipeInput | UpdateRecipeInput) {
+		if (mode === "edit") {
+			await updateRecipe(data);
+		} else {
+			await registerRecipe(data);
+			reset();
+		}
 		onSuccess?.();
 	}
+
+	const isPending = isCreating || isUpdating;
+	const error = createError || updateError;
 
 	return (
 		<form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -197,7 +251,13 @@ export function RecipeForm({ onSuccess }: RecipeFormProps) {
 			)}
 
 			<Button type="submit" disabled={isPending}>
-				{isPending ? "Cadastrando..." : "Cadastrar receita"}
+				{isPending
+					? mode === "edit"
+						? "Atualizando..."
+						: "Cadastrando..."
+					: mode === "edit"
+						? "Atualizar receita"
+						: "Cadastrar receita"}
 			</Button>
 		</form>
 	);

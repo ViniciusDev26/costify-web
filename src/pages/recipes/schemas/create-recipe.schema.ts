@@ -1,15 +1,14 @@
 import { z } from "zod";
 
-const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const uuidRegex =
+	/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 export const RecipeIngredientSchema = z.object({
 	ingredientId: z
 		.string()
 		.min(1, "Ingredient is required")
 		.regex(uuidRegex, "Invalid ingredient ID"),
-	quantity: z
-		.number()
-		.min(0.01, "Quantity must be greater than 0"),
+	quantity: z.number().min(0.01, "Quantity must be greater than 0"),
 	unit: z.string().min(1, "Unit is required"),
 });
 

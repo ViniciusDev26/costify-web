@@ -4,10 +4,9 @@ import "./index.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router-dom";
 import { queryClient } from "./api/query-client.ts";
+import { ThemeToggle } from "./components/theme-toggle.tsx";
 import { router } from "./routes/index.tsx";
 import { ThemeEffect } from "./stores/theme/effect.tsx";
-import { ThemeToggle } from "./components/theme-toggle.tsx";
-
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
